@@ -3,9 +3,13 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import User from "@/models/userModel";
 import bcrypt from "bcryptjs";
-
+import GitHubProvider from "next-auth/providers/github";
 export const authOptions: NextAuthOptions = {
   providers: [
+    GitHubProvider({
+      clientId: process.env.GITHUB_ID!,
+      clientSecret: process.env.GITHUB_SECRET!,
+    }),
     CredentialsProvider({
       name: "Credentials",
       id: "credentials",
@@ -17,8 +21,10 @@ export const authOptions: NextAuthOptions = {
         await connect();
 
         try {
+          console.log(credentials);
           const user = await User.findOne({ email: credentials.email });
-
+          // const users = await User.find();
+          // console.log(user,users);
           if (!user) {
             throw new Error("User not found");
           }
